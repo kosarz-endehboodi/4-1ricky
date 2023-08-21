@@ -231,3 +231,16 @@
     flex-direction: row;
   }
 }
+
+
+@media (max-width: 768px) {
+  .character-detail {
+    flex-direction: row;
+  }
+  .character-detail__img {
+    width: 40%;
+  }
+  .character-detail__info .actions {
+    flex-direction: row;
+  }
+}
