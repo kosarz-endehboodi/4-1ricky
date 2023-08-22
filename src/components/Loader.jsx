@@ -1,16 +1,15 @@
+import "../load.scss"
+export default function load(){
+    return (
+        <div id='outer'>
+            <div id='middle'>
 
-export default function Load() {
-    return <div style={{
-        width: "400px",
-        color: "var(--slate-300)",
-        display: "flex",
-        alignItems: "center",
-        gap: "1rem",
-
-    }}     >
-        <p >loading...</p>
-
-
-    </div>
+                <div id='inner'>
+                </div>
+            </div>
+        </div>)
 
 }
+
+
+
