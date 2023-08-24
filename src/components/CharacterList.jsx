@@ -1,6 +1,6 @@
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Loader from "./Loader";
-export default function characterList({ Characters ,isLoading,onSelectHandler }) {
+export default function characterList({ selectItem, Characters, isLoading, onSelectHandler }) {
   // console.log(Characters);
   if (isLoading)
     return (
@@ -11,7 +11,7 @@ export default function characterList({ Characters ,isLoading,onSelectHandler })
   return (
     <div className="character-list">
       {
-        Characters.map((item) => (<Character item={item} key={item.id} onSelectHandler={onSelectHandler}/>
+        Characters.map((item) => (<Character selectItem={selectItem} item={item} key={item.id} onSelectHandler={onSelectHandler} />
         ))
       }
 
@@ -19,20 +19,20 @@ export default function characterList({ Characters ,isLoading,onSelectHandler })
   );
 }
 
-function Character({ item,onSelectHandler }) {
+function Character({ selectItem, item, onSelectHandler }) {
   return (
     <div className="list__item">
       <img src={item.image} alt={item.name} />
-      <CharacterName  item={item}/>
-      <CharacterInfo item={item}/>
-      <button className="icon red" onClick={()=>onSelectHandler(item.id)} >
-        <EyeIcon />
+      <CharacterName item={item} />
+      <CharacterInfo item={item} />
+      <button className="icon red" onClick={() => onSelectHandler(item.id)} >
+        {selectItem === item.id ? <EyeSlashIcon /> : <EyeIcon />}
       </button>
     </div>
   );
 }
 
-function CharacterName({item}) {
+function CharacterName({ item }) {
   return (
     <h3 className="name">
       <span>{item.gender === "Male" ? "🧑" : "👩"}</span>
@@ -41,7 +41,7 @@ function CharacterName({item}) {
   )
 }
 
-function CharacterInfo({item}) {
+function CharacterInfo({ item }) {
   return (
     <div className="list-item__info  info">
       <span
@@ -51,4 +51,4 @@ function CharacterInfo({item}) {
       <span>-{item.species}</span>
     </div>
   )
-  }
+}

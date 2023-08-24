@@ -61,7 +61,7 @@ export default function App() {
 
   //handler click items
   const handlerSelectCharcter = (id) => {
-    setSelectitem(id)
+    setSelectitem(previd => previd === id ? null : id)
   }
 
   return (
@@ -75,7 +75,6 @@ export default function App() {
         </NavBar>
 
         <div className="main"  >
-
           <CharacterList
             onSelectHandler={handlerSelectCharcter}
             selectItem={selectItem}
