@@ -1,25 +1,32 @@
-import { allCharacters } from "../data/data";
+import { allCharacters, character } from "../data/data";
 import "./App.css";
-import NavBar from "./components/NavBar";
+
 import CharacterList from "./components/CharacterList";
 import CharacterDetail from "./components/CharacterDetail";
 import { useEffect, useState } from "react";
-import Loader from "./components/Loader";
+import Loader, { loadCharcter } from "./components/Loader";
+import NavBar, { Search, SearchResulth } from "./components/NavBar";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 
 export default function App() {
   const [characters, setcharacter] = useState([]);
   const [isLoading, setlodaing] = useState(false)
-
+  const [query, setquery] = useState("")
+  const [selectItem, setSelectitem] = useState(null)
   useEffect(() => {
+
     async function fetchlistloader() {
       try {
         setlodaing(true)
           ;
-        const response = "https://rickandmortyapi.com/api/character";
+        const response = `https://rickandmortyapi.com/api/character/?name=${query}`;
         const { data } = await axios.get(response)
         setcharacter(data.results)
+
+        //for array set
+        //{data}=> set(data.res)
+        //data=set(data.data.res)
       } catch (err) {
         // for real project : err.response.data.message or error
         toast.error(err.response.data.error)
@@ -27,9 +34,10 @@ export default function App() {
         setlodaing(false)
       }
 
+
     }
     fetchlistloader();
-  }, [])
+  }, [query])
 
   //with async
   // useEffect(() => {
@@ -50,29 +58,35 @@ export default function App() {
   //   fetchlistloader();
   // }, [])
 
-  if (isLoading) {
-    return (
-      <Loader />
-    )
-  } else {
-    return (
-      <div className="container">
 
-        <div className="app" >
-          <Toaster />
-          <div>
-            <NavBar characterResult={characters.length} />
-          </div>
-          <div className="main"  >
+  //handler click items
+  const handlerSelectCharcter = (id) => {
+    setSelectitem(id)
+  }
 
-            <CharacterList Characters={characters} />
+  return (
+    <div className="container">
 
-            <CharacterDetail />
-          </div>
+      <div className="app" >
+        <Toaster />
+        <NavBar >
+          <Search query={query} setquery={setquery} />
+          <SearchResulth numOfResult={characters.length} />
+        </NavBar>
+
+        <div className="main"  >
+
+          <CharacterList
+            onSelectHandler={handlerSelectCharcter}
+            selectItem={selectItem}
+            Characters={characters} />
+
+          <CharacterDetail selectItem={selectItem} />
         </div>
       </div>
-    );
+    </div>
+  );
 
-  }
 }
+
 
