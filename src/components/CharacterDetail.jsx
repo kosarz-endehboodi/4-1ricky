@@ -5,11 +5,14 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Loader from "./Loader";
 
-export default function CharacterDetail({ selectItem }) {
+export default function CharacterDetail({isAddedToFav ,selectItem ,onAddfavorite}) {
   //state
   const [character, setcharacter] = useState(null)
   const [isLoading, setLoading] = useState(false);
   const [episodes, setEpisodes] = useState([]);
+  
+  
+  
   //fetch single charcter
   useEffect(() => {
     async function fetchdata() {
@@ -54,13 +57,13 @@ export default function CharacterDetail({ selectItem }) {
   }
   return (
     <div style={{ flex: 1 }}>
-      <CharacterInfo character={character} />
+      <CharacterInfo isAddedToFav={isAddedToFav} character={character} onAddfavorite={onAddfavorite} />
       <Characterepisode episodes={episodes} />
     </div>
   );
 }
 
-function CharacterInfo({ character }) {
+function CharacterInfo({isAddedToFav ,character,onAddfavorite }) {
   return (
     <div className="character-detail">
       <img
@@ -85,7 +88,9 @@ function CharacterInfo({ character }) {
           <p>{character.location.name}</p>
         </div>
         <div className="actions">
-          <button className="btn btn--primary">Add to Favorite</button>
+         {
+         isAddedToFav? (<p> already Added to favorites.</p>):(<button onClick={()=>onAddfavorite(character)} className="btn btn--primary">Add to Favorite</button>)
+        }
         </div>
       </div>
     </div>
