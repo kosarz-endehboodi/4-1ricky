@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { character, episodes } from "../../data/data";
-import { ArrowUpCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowDownCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import Loader from "./Loader";
@@ -97,16 +97,30 @@ function CharacterInfo({isAddedToFav ,character,onAddfavorite }) {
   )
 }
 function Characterepisode({ episodes }) {
+ const[sortBy , setsortBy]=useState(true)
+ //asc
+ let sortedEpisodes;
+ if(sortBy){
+  sortedEpisodes=[... episodes].sort(
+    (a,b)=>new Date(a.created)- new Date(b.created)
+  );
+ } else(
+  sortedEpisodes=[... episodes].sort(
+    (a,b)=>new Date(b.created)- new Date(a.created)
+  )
+ )
   return (
     <div className="character-episodes">
       <div className="title">
         <h2>List of Episodes</h2>
-        <button>
-          <ArrowUpCircleIcon className="icon" />
+        <button onClick={()=>setsortBy(is=>!is)}>
+          {
+          (sortBy?(<ArrowUpCircleIcon className="icon" />):<ArrowDownCircleIcon className="icon" />)
+          }
         </button>
       </div>
       <ul>
-        {episodes.map((item, index) => {
+        {sortedEpisodes.map((item, index) => {
           return (
             <li key={item.id}>
               <div>
