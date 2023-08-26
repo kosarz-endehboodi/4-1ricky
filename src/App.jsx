@@ -8,13 +8,14 @@ import Loader, { loadCharcter } from "./components/Loader";
 import NavBar, { Search, SearchResulth, Favorite } from "./components/NavBar";
 import { Toaster, toast } from "react-hot-toast";
 import axios, { isCancel } from "axios";
+import Modal from "./components/Modal";
 
 export default function App() {
   const [characters, setcharacter] = useState([]);
   const [isLoading, setlodaing] = useState(false)
   const [query, setquery] = useState("")
   const [selectItem, setSelectitem] = useState(null)
-  const [favorites, setFavorites] = useState([])
+  const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem("favoritelist")) || [])
   const [count, setcount] = useState(0)
   useEffect(() => {
     const controller = new AbortController();
@@ -35,11 +36,11 @@ export default function App() {
         //axios => axios.cancel
         if (!axios.isCancel()) {
           setcharacter([]);
-        
-         // for real project : err.response.data.message or error
-         toast.error(err.response.data.error)
+
+          // for real project : err.response.data.message or error
+          toast.error(err.response.data.error)
         }
-       
+
       } finally {
         setlodaing(false)
       }
@@ -87,6 +88,13 @@ export default function App() {
     }
     // return function (){}
   }, [count]);
+
+  //localstorage uses
+  useEffect(() => {
+    localStorage.setItem("favoritelist", JSON.stringify(favorites))
+  }, [favorites])
+
+
   const handlerSelectCharcter = (id) => {
     setSelectitem(previd => previd === id ? null : id)
   }
@@ -95,23 +103,31 @@ export default function App() {
   }
   const isAddedToFav = favorites.map(fav => fav.id).includes(selectItem);
 
+  const onHandeldeletFav = (id) => {
+
+    setFavorites(favorites.filter((fav) => fav.id !== id));
+  }
+
   return (
     <div className="container">
-
       <div className="app" >
         <div>{count}</div>
         <Toaster />
+
         <NavBar >
           <Search query={query} setquery={setquery} />
           <SearchResulth numOfResult={characters.length} />
-          <Favorite numOfFavorite={favorites.length} />ّ
+          <Favorite favorites={favorites} deletfav={onHandeldeletFav} />
         </NavBar>
 
         <div className="main"  >
           <CharacterList
+            isLoading={isLoading}
             onSelectHandler={handlerSelectCharcter}
             selectItem={selectItem}
             Characters={characters} />
+
+
 
           <CharacterDetail isAddedToFav={isAddedToFav} onAddfavorite={handlrAddFav} selectItem={selectItem} />
         </div>
