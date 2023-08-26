@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Loader, { loadCharcter } from "./components/Loader";
 import NavBar, { Search, SearchResulth, Favorite } from "./components/NavBar";
 import { Toaster, toast } from "react-hot-toast";
-import axios from "axios";
+import axios, { isCancel } from "axios";
 
 export default function App() {
   const [characters, setcharacter] = useState([]);
@@ -15,23 +15,31 @@ export default function App() {
   const [query, setquery] = useState("")
   const [selectItem, setSelectitem] = useState(null)
   const [favorites, setFavorites] = useState([])
-
+  const [count, setcount] = useState(0)
   useEffect(() => {
-
+    const controller = new AbortController();
+    const signal = controller.signal
     async function fetchlistloader() {
       try {
         setlodaing(true)
           ;
         const response = `https://rickandmortyapi.com/api/character/?name=${query}`;
-        const { data } = await axios.get(response)
+        const { data } = await axios.get(response, { signal })
         setcharacter(data.results)
 
         //for array set
         //{data}=> set(data.res)
         //data=set(data.data.res)
       } catch (err) {
-        // for real project : err.response.data.message or error
-        toast.error(err.response.data.error)
+        //fetch => err .name === aborterror
+        //axios => axios.cancel
+        if (!axios.isCancel()) {
+          setcharacter([]);
+        
+         // for real project : err.response.data.message or error
+         toast.error(err.response.data.error)
+        }
+       
       } finally {
         setlodaing(false)
       }
@@ -39,9 +47,14 @@ export default function App() {
 
     }
     fetchlistloader();
+    return () => {
+      //controller
+      controller.abort();
+    }
   }, [query])
 
   //with async
+
   // useEffect(() => {
   //   async function fetchlistloader() {
   //     try {
@@ -62,18 +75,31 @@ export default function App() {
 
 
   //handler click items
+
+  //counts
+
+  //
+  //
+  useEffect(() => {
+    const interval = setInterval(() => setcount((c) => c + 1), 1000);
+    return () => {
+      clearInterval(interval)
+    }
+    // return function (){}
+  }, [count]);
   const handlerSelectCharcter = (id) => {
     setSelectitem(previd => previd === id ? null : id)
   }
   const handlrAddFav = (charfav) => {
     setFavorites(prev => [...prev, charfav])
   }
-const isAddedToFav=  favorites.map(fav=>fav.id).includes(selectItem);
+  const isAddedToFav = favorites.map(fav => fav.id).includes(selectItem);
 
   return (
     <div className="container">
 
       <div className="app" >
+        <div>{count}</div>
         <Toaster />
         <NavBar >
           <Search query={query} setquery={setquery} />
@@ -87,7 +113,7 @@ const isAddedToFav=  favorites.map(fav=>fav.id).includes(selectItem);
             selectItem={selectItem}
             Characters={characters} />
 
-          <CharacterDetail  isAddedToFav={isAddedToFav} onAddfavorite={handlrAddFav} selectItem={selectItem} />
+          <CharacterDetail isAddedToFav={isAddedToFav} onAddfavorite={handlrAddFav} selectItem={selectItem} />
         </div>
       </div>
     </div>
