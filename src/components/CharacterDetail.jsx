@@ -5,14 +5,14 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Loader from "./Loader";
 
-export default function CharacterDetail({isAddedToFav ,selectItem ,onAddfavorite}) {
+export default function CharacterDetail({ isAddedToFav, selectItem, onAddfavorite }) {
   //state
   const [character, setcharacter] = useState(null)
   const [isLoading, setLoading] = useState(false);
   const [episodes, setEpisodes] = useState([]);
-  
-  
-  
+
+
+
   //fetch single charcter
   useEffect(() => {
     async function fetchdata() {
@@ -63,7 +63,7 @@ export default function CharacterDetail({isAddedToFav ,selectItem ,onAddfavorite
   );
 }
 
-function CharacterInfo({isAddedToFav ,character,onAddfavorite }) {
+function CharacterInfo({ isAddedToFav, character, onAddfavorite }) {
   return (
     <div className="character-detail">
       <img
@@ -88,38 +88,43 @@ function CharacterInfo({isAddedToFav ,character,onAddfavorite }) {
           <p>{character.location.name}</p>
         </div>
         <div className="actions">
-         {
-         isAddedToFav? (<p> already Added to favorites.</p>):(<button onClick={()=>onAddfavorite(character)} className="btn btn--primary">Add to Favorite</button>)
-        }
+          {
+            isAddedToFav ? (<p> already Added to favorites.</p>) : (<button onClick={() => onAddfavorite(character)} className="btn btn--primary">Add to Favorite</button>)
+          }
         </div>
       </div>
     </div>
   )
 }
 function Characterepisode({ episodes }) {
- const[sortBy , setsortBy]=useState(true)
- //asc
- let sortedEpisodes;
- if(sortBy){
-  sortedEpisodes=[... episodes].sort(
-    (a,b)=>new Date(a.created)- new Date(b.created)
-  );
- } else(
-  sortedEpisodes=[... episodes].sort(
-    (a,b)=>new Date(b.created)- new Date(a.created)
+  const [sortBy, setsortBy] = useState(true)
+  //asc
+  let sortedEpisodes;
+  if (sortBy) {
+    sortedEpisodes = [...episodes].sort(
+      (a, b) => new Date(a.created) - new Date(b.created)
+    );
+  } else (
+    sortedEpisodes = [...episodes].sort(
+      (a, b) => new Date(b.created) - new Date(a.created)
+    )
   )
- )
+
+
   return (
-    <div className="character-episodes">
+    <div
+      className="character-episodes">
+
+
       <div className="title">
         <h2>List of Episodes</h2>
-        <button onClick={()=>setsortBy(is=>!is)}>
+        <button onClick={() => setsortBy(is => !is)}>
           {
-          (sortBy?(<ArrowUpCircleIcon className="icon" />):<ArrowDownCircleIcon className="icon" />)
+            (sortBy ? (<ArrowUpCircleIcon className="icon" />) : <ArrowDownCircleIcon className="icon" />)
           }
         </button>
       </div>
-      <ul>
+      <ul className={sortedEpisodes.length > 42 ? "scroll" : ""}>
         {sortedEpisodes.map((item, index) => {
           return (
             <li key={item.id}>

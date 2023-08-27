@@ -1,6 +1,7 @@
 import { XCircleIcon } from "@heroicons/react/24/outline";
+import { Favorite } from "./NavBar";
 
-export default function Modal({ title, children, onOpen, open }) {
+export default function Modal({ favorites, title, children, onOpen, open }) {
 
     if (!open) return null;
     return (
@@ -11,8 +12,10 @@ export default function Modal({ title, children, onOpen, open }) {
                     <h2>{title}</h2>
                     <button onClick={() => onOpen(false)}><XCircleIcon className="icon close" /></button>
                 </div>
+
                 {children}
+
             </div>
-        </div>
+        </div >
     )
 }

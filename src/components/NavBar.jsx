@@ -41,9 +41,11 @@ export function Favorite({ favorites, deletfav }) {
     <>
       <Modal title="list of favorite chrecter "
         onOpen={setopen} open={open}>
-        {favorites.map((item) => <Character onSelectHandler={() => { }} item={item} selectItem={1} >
-          <button onClick={()=>deletfav(item.id)}  className="red icon"><TrashIcon /></button>
-        </Character>)}
+        <div className={favorites.length > 4 ? "scrollfav" : ""}>
+          {favorites.map((item) => <Character onSelectHandler={() => { }} item={item} selectItem={1} >
+            <button onClick={() => deletfav(item.id)} className="red icon"><TrashIcon /></button>
+          </Character>)}
+        </div>
       </Modal>
       <div className="heart" onClick={() => setopen((is) => !is)}>
         <HeartIcon className="icon" />
