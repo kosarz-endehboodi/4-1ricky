@@ -8,51 +8,23 @@ import Loader, { loadCharcter } from "./components/Loader";
 import NavBar, { Search, SearchResulth, Favorite } from "./components/NavBar";
 import { Toaster, toast } from "react-hot-toast";
 import axios, { isCancel } from "axios";
-import Modal from "./components/Modal";
+// import Modal from "./components/Modal";
+import useCharecter from "./Hooks/useChrecter";
+import useLocal from "./Hooks/useLocalstorage";
+
+
+
+
 
 export default function App() {
-  const [characters, setcharacter] = useState([]);
-  const [isLoading, setlodaing] = useState(false)
+
   const [query, setquery] = useState("")
+  const { isLoading, characters } = useCharecter(query)
   const [selectItem, setSelectitem] = useState(null)
-  const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem("favoritelist")) || [])
+  //fav set local
+  const [favorites, setFavorites] = useLocal("favorites", []);
   const [count, setcount] = useState(0)
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal
-    async function fetchlistloader() {
-      try {
-        setlodaing(true)
-          ;
-        const response = `https://rickandmortyapi.com/api/character/?name=${query}`;
-        const { data } = await axios.get(response, { signal })
-        setcharacter(data.results)
 
-        //for array set
-        //{data}=> set(data.res)
-        //data=set(data.data.res)
-      } catch (err) {
-        //fetch => err .name === aborterror
-        //axios => axios.cancel
-        if (!axios.isCancel()) {
-          setcharacter([]);
-
-          // for real project : err.response.data.message or error
-          toast.error(err.response.data.error)
-        }
-
-      } finally {
-        setlodaing(false)
-      }
-
-
-    }
-    fetchlistloader();
-    return () => {
-      //controller
-      controller.abort();
-    }
-  }, [query])
 
   //with async
 
@@ -89,10 +61,6 @@ export default function App() {
     // return function (){}
   }, [count]);
 
-  //localstorage uses
-  useEffect(() => {
-    localStorage.setItem("favoritelist", JSON.stringify(favorites))
-  }, [favorites])
 
 
   const handlerSelectCharcter = (id) => {
